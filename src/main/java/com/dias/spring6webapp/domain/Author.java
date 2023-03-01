@@ -53,4 +53,33 @@ public class Author {
         this.books = books;
     }
 
+
+
+    @Override
+    public String toString() {
+        return "{" +
+            " id='" + getId() + "'" +
+            ", firstName='" + getFirstName() + "'" +
+            ", lastName='" + getLastName() + "'" +
+            ", books='" + getBooks() + "'" +
+            "}";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == this)
+            return true;
+        if (!(o instanceof Author)) {
+            return false;
+        }
+        Author author = (Author) o;
+        return getId() != null ? getId().equals(author.getId()) : author.getId() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        return getId() != null ? getId().hashCode() : 0;
+    }
+
 }
