@@ -1,9 +1,10 @@
 package com.dias.spring6webapp.repositories;
 
-import org.springframework.data.repository.CrudRepository;
-
 import com.dias.spring6webapp.domain.Book;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface BookRepository extends CrudRepository<Book, Long> {
-    
+@Repository
+public interface BookRepository extends JpaRepository<Book, Long> {
+
 }
