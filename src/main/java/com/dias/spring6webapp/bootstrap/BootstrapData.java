@@ -1,70 +1,82 @@
 package com.dias.spring6webapp.bootstrap;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import com.dias.spring6webapp.domain.Author;
 import com.dias.spring6webapp.domain.Book;
 import com.dias.spring6webapp.domain.Publisher;
-import com.dias.spring6webapp.repositories.AuthorRepository;
 import com.dias.spring6webapp.repositories.BookRepository;
 import com.dias.spring6webapp.repositories.PublisherRepository;
+import com.dias.spring6webapp.repositories.AuthorRepository;
+
+import java.util.Set;
 
 @Component
-public class BootstrapData implements CommandLineRunner{
-
-    private final AuthorRepository authorRepository;
+@RequiredArgsConstructor
+public class BootstrapData implements CommandLineRunner {
     private final BookRepository bookRepository;
     private final PublisherRepository publisherRepository;
-
-    public BootstrapData(AuthorRepository authorRepository, BookRepository bookRepository, PublisherRepository publisherRepository) {
-        this.authorRepository = authorRepository;
-        this.bookRepository = bookRepository;
-        this.publisherRepository = publisherRepository;
-    }
-
+    private final AuthorRepository authorRepository;
 
     @Override
     public void run(String... args) throws Exception {
-        Author eric = new Author();
-        eric.setFirstName("Eric");
-        eric.setLastName("Evans");
+        Author eric = Author
+                .builder()
+                .firstName("Eric")
+                .lastName("Evans")
+                .build();
         
-        Book ddd = new Book();
-        ddd.setTitle("Domain Drive Design");
-        ddd.setIsbn("123456");
+        Book ddd = Book
+                .builder()
+                .title("Domain Driven Design")
+                .isbn("123123")
+                .build();
 
         Author ericSaved = authorRepository.save(eric);
         Book dddSaved = bookRepository.save(ddd);
 
-        Publisher catapult = new Publisher();
-        catapult.setName("Catapult");
-        catapult.setAddress("Seila");
-        catapult.setCity("New York city");
-        catapult.setState("New york");
-        catapult.setZip("08422422");
+        Publisher catapult = Publisher
+                .builder()
+                .name("Catapult")
+                .address("Rua dos Bobos, 0")
+                .city("São Paulo")
+                .state("SP")
+                .zip("00000-000")
+                .build();
+
         Publisher savedPublisher = publisherRepository.save(catapult);
 
         dddSaved.setPublisher(savedPublisher);
-
         
-        Author rod = new Author();
-        rod.setFirstName("Rod");
-        rod.setLastName("Johnson");
+        Author rod = Author
+                .builder()
+                .firstName("Rod")
+                .lastName("Johnson")
+                .build();
 
-        Book noEJB = new Book();
-        noEJB.setTitle("J2EE Development without EJB");
-        noEJB.setIsbn("54757585");
+        Book noEJB = Book
+                .builder()
+                .publisher(savedPublisher)
+                .title("J2EE Development without EJB")
+                .isbn("3939459459")
+                .build();
 
         Author rodSaved = authorRepository.save(rod);
         Book noEJBSaved = bookRepository.save(noEJB);
 
-        noEJBSaved.setPublisher(savedPublisher);
+        /*
+        *   Criei uma lista de autores e outra de livros para associar os dois objetos
+        *  e salvar no banco de dados. Porque tava dando erro de transação.
+        * */
+        Set<Author> authors = Set.of(ericSaved, rodSaved);
+        Set<Book> books = Set.of(dddSaved, noEJBSaved);
 
-        ericSaved.getBooks().add(dddSaved);
-        rodSaved.getBooks().add(noEJBSaved);
-        dddSaved.getAuthors().add(ericSaved);
-        noEJBSaved.getAuthors().add(rodSaved);
+        ericSaved.setBooks(books);
+        rodSaved.setBooks(books);
+        dddSaved.setAuthors(authors);
+        noEJBSaved.setAuthors(authors);
 
         // persisted
         authorRepository.save(ericSaved);
@@ -76,7 +88,5 @@ public class BootstrapData implements CommandLineRunner{
         System.out.println("Author Count: "+ authorRepository.count());
         System.out.println("Book Count: "+ bookRepository.count());
         System.out.println("Publisher Count: "+ publisherRepository.count());
-
     }
-    
 }

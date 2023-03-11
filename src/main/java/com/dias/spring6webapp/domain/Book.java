@@ -3,22 +3,25 @@ package com.dias.spring6webapp.domain;
 import java.util.HashSet;
 import java.util.Set;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data // Cria automaticamente os métodos getters, setters, equals, hashcode e toString
+@Builder // Cria automaticamente o método builder para instanciar objetos
+@AllArgsConstructor // Cria automaticamente o construtor com todos os atributos da classe
+@NoArgsConstructor // Cria automaticamente o construtor sem argumentos
 @Entity
+@Table(name = "books")
 public class Book {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+    @Column(unique = true, nullable = false, length = 50)
     private String title;
+    @Column(unique = true, nullable = false, length = 50)
     private String isbn;
 
     @ManyToMany
@@ -27,75 +30,4 @@ public class Book {
 
     @ManyToOne
     private Publisher publisher;
-
-    public Publisher getPublisher() {
-        return this.publisher;
-    }
-
-    public void setPublisher(Publisher publisher) {
-        this.publisher = publisher;
-        
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getIsbn() {
-        return this.isbn;
-    }
-
-    public void setIsbn(String isbn) {
-        this.isbn = isbn;
-    }
-
-    public Set<Author> getAuthors() {
-        return this.authors;
-    }
-
-    public void setAuthors(Set<Author> authors) {
-        this.authors = authors;
-    }
-
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
-    @Override
-    public String toString() {
-        return "{" +
-            " id='" + getId() + "'" +
-            ", title='" + getTitle() + "'" +
-            ", isbn='" + getIsbn() + "'" +
-            ", authors='" + getAuthors() + "'" +
-            "}";
-    }
-
-
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof Book)) {
-            return false;
-        }
-        Book book = (Book) o;
-        return getId() != null ? getId().equals(book.getId()) : book.getId() == null;
-    }
-
-    @Override
-    public int hashCode() {
-        return getId() != null ? getId().hashCode() : 0;
-    }
-
 }
